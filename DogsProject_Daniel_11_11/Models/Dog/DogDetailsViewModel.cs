@@ -1,0 +1,10 @@
+namespace DogsProject_Daniel_11_11.Models.Dog;
+
+public class DogDetailsViewModel
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public int Age { get; set; }
+    public string Breed { get; set; } = null!;
+    public string? Picture { get; set; }
+}
