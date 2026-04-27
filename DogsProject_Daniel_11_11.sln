@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogsProject_Daniel_11_11", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogsApp.Infrastructure", "DogsApp.Infrastructure\DogsApp.Infrastructure.csproj", "{3059DD15-AD1B-48A7-B0F1-C22D3E841923}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogsApp.Core", "DogsApp.Core\DogsApp.Core.csproj", "{3328F804-F489-4ADC-B6A8-EDB91BAD2E27}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{3059DD15-AD1B-48A7-B0F1-C22D3E841923}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3059DD15-AD1B-48A7-B0F1-C22D3E841923}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3059DD15-AD1B-48A7-B0F1-C22D3E841923}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3328F804-F489-4ADC-B6A8-EDB91BAD2E27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3328F804-F489-4ADC-B6A8-EDB91BAD2E27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3328F804-F489-4ADC-B6A8-EDB91BAD2E27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3328F804-F489-4ADC-B6A8-EDB91BAD2E27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

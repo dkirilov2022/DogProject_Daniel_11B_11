@@ -1,3 +1,5 @@
+using DogsApp.Core.Contracts;
+using DogsApp.Core.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using DogsProject_Daniel_11_11.Data;
@@ -28,6 +30,7 @@ public class Program
             })
             .AddEntityFrameworkStores<ApplicationDbContext>();
         builder.Services.AddControllersWithViews();
+        builder.Services.AddTransient<IDogService, DogService>();
 
         var app = builder.Build();
 
