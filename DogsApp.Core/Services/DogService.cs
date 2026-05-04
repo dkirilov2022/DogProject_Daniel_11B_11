@@ -1,5 +1,6 @@
 using DogsApp.Core.Contracts;
 using DogsProject_Daniel_11_11.Data;
+using Microsoft.EntityFrameworkCore;
 using DogsProject_Daniel_11_11.Data.Domain;
 
 namespace DogsApp.Core.Services;
@@ -13,13 +14,13 @@ public class DogService : IDogService
         _context = context;
     }
 
-    public bool Create(string name, int age, string breed, string? picture)
+    public bool Create(string name, int age, int breedId, string? picture)
     {
         Dog item = new Dog()
         {
             Name = name,
             Age = age,
-            Breed = breed,
+            BreedId = breedId,
             Picture = picture
         };
         
@@ -29,33 +30,38 @@ public class DogService : IDogService
 
     public Dog GetDogById(int dogId)
     {
-        return _context.Dogs.Find(dogId);
+        return _context.Dogs
+            .Include(d => d.Breed)
+            .FirstOrDefault(d => d.Id == dogId);
     }
 
     public List<Dog> GetDogs()
     {
-        List<Dog> dogs = _context.Dogs.ToList();
+        List<Dog> dogs = _context.Dogs
+            .Include(d => d.Breed)
+            .ToList();
         return dogs;
     }
     
     public List<Dog> GetDogs(string searchStringBreed, string searchStringName)
     {
-        List<Dog> dogs = _context.Dogs.ToList();
+        IQueryable<Dog> query = _context.Dogs
+            .Include(d => d.Breed);
 
         if (!string.IsNullOrEmpty(searchStringBreed) && !string.IsNullOrEmpty(searchStringName))
         {
-            dogs = dogs.Where(d => d.Breed.Contains(searchStringBreed) && d.Name.Contains(searchStringName)).ToList();
+            query = query.Where(d => d.Breed.Name.Contains(searchStringBreed) && d.Name.Contains(searchStringName));
         }
         else if (!string.IsNullOrEmpty(searchStringBreed))
         {
-            dogs = dogs.Where(d => d.Breed.Contains(searchStringBreed)).ToList();
+            query = query.Where(d => d.Breed.Name.Contains(searchStringBreed));
         }
         else if (!string.IsNullOrEmpty(searchStringName))
         {
-            dogs = dogs.Where(d => d.Name.Contains(searchStringName)).ToList();
+            query = query.Where(d => d.Name.Contains(searchStringName));
         }
 
-        return dogs;
+        return query.ToList();
     }
 
     public bool RemoveById(int dogId)
@@ -70,7 +76,7 @@ public class DogService : IDogService
         return _context.SaveChanges() != 0;
     }
 
-    public bool UpdateDog(int dogId, string name, int age, string breed, string? picture)
+    public bool UpdateDog(int dogId, string name, int age, int breedId, string? picture)
     {
         var dog = GetDogById(dogId);
         if (dog == default(Dog))
@@ -80,7 +86,7 @@ public class DogService : IDogService
 
         dog.Name = name;
         dog.Age = age;
-        dog.Breed = breed;
+        dog.BreedId = breedId;
         dog.Picture = picture;
         _context.Update(dog);
         return _context.SaveChanges() != 0;

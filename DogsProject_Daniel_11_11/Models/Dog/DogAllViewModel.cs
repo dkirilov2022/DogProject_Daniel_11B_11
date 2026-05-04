@@ -14,7 +14,7 @@ public class DogAllViewModel
     public int Age { get; set; }
     
     [Display(Name = "Breed")]
-    public string Breed { get; set; }
+    public string BreedName { get; set; } = null!;
     
     [Display(Name = "Dog Picture")]
     public string? DogPicture { get; set; }
