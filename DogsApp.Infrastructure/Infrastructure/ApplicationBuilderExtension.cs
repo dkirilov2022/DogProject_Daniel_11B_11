@@ -14,42 +14,52 @@ public static class ApplicationBuilderExtension
 
         var services = serviceScope.ServiceProvider;
 
-        var data = services.GetRequiredService<ApplicationDbContext>();
-        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await RoleSeeder(services);
+        await SeedAdministrator(services);
 
+        var data = services.GetRequiredService<ApplicationDbContext>();
         SeedBrands(data);
-        await SeedRoles(roleManager);
-        await SeedAdmin(userManager);
 
         return app;
     }
 
-    private static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
+    private static async Task RoleSeeder(IServiceProvider serviceProvider)
     {
-        if (!await roleManager.RoleExistsAsync("Administrator"))
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+        string[] roleNames = { "Administrator", "Client" };
+
+        IdentityResult roleResult;
+
+        foreach (var role in roleNames)
         {
-            await roleManager.CreateAsync(new IdentityRole("Administrator"));
+            var roleExist = await roleManager.RoleExistsAsync(role);
+
+            if (!roleExist)
+            {
+                roleResult = await roleManager.CreateAsync(new IdentityRole(role));
+            }
         }
     }
 
-    private static async Task SeedAdmin(UserManager<ApplicationUser> userManager)
+    private static async Task SeedAdministrator(IServiceProvider serviceProvider)
     {
+        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
         if (await userManager.FindByNameAsync("admin") == null)
         {
-            var user = new ApplicationUser
-            {
-                UserName = "admin",
-                Email = "admin@dogs.com",
-                FirstName = "Admin",
-                LastName = "User",
-                EmailConfirmed = true
-            };
+            ApplicationUser user = new ApplicationUser();
+            user.FirstName = "admin";
+            user.LastName = "admin";
+            user.PhoneNumber = "0888888888";
+            user.UserName = "admin";
+            user.Email = "admin@admin.com";
 
-            var result = await userManager.CreateAsync(user, "Admin123!");
+            var result = await userManager.CreateAsync(user, "Admin123456");
+            
             if (result.Succeeded)
             {
-                await userManager.AddToRoleAsync(user, "Administrator");
+                userManager.AddToRoleAsync(user, "Administrator").Wait();
             }
         }
     }
