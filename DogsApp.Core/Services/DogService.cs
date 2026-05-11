@@ -14,14 +14,15 @@ public class DogService : IDogService
         _context = context;
     }
 
-    public bool Create(string name, int age, int breedId, string? picture)
+    public bool Create(string name, int age, int breedId, string? picture, string userId)
     {
         Dog item = new Dog()
         {
             Name = name,
             Age = age,
-            BreedId = breedId,
-            Picture = picture
+            Breed = _context.Breeds.Find(breedId),
+            Picture = picture,
+            OwnerId = userId
         };
         
         _context.Dogs.Add(item);

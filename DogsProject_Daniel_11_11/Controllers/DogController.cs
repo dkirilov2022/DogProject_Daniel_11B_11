@@ -4,11 +4,14 @@ using DogsProject_Daniel_11_11.Data.Domain;
 using DogsProject_Daniel_11_11.Models.Breed;
 using DogsProject_Daniel_11_11.Models.Dog;
 using Humanizer.DateTimeHumanizeStrategy;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using System.Security.Claims;
 
 namespace DogsProject_Daniel_11_11.Controllers
 {
+    [Authorize]
     public class DogController : Controller
     {
         private readonly IBreedService _breedService;
@@ -21,6 +24,7 @@ namespace DogsProject_Daniel_11_11.Controllers
         }
         
         // GET: DogController
+        [AllowAnonymous]
         public IActionResult Index(string searchStringBreed, string searchStringName)
         {
             List<DogAllViewModel> dogs = _dogService.GetDogs(searchStringBreed, searchStringName)
@@ -30,7 +34,8 @@ namespace DogsProject_Daniel_11_11.Controllers
                     Name = dogFromDb.Name,
                     Age = dogFromDb.Age,
                     BreedName = dogFromDb.Breed.Name,
-                    DogPicture = dogFromDb.Picture
+                    DogPicture = dogFromDb.Picture,
+                    FullName = dogFromDb.Owner.FirstName + " " + dogFromDb.Owner.LastName
                 }).ToList();
 
             return this.View(dogs);
@@ -51,7 +56,8 @@ namespace DogsProject_Daniel_11_11.Controllers
                 Name = item.Name,
                 Age = item.Age,
                 BreedName = item.Breed.Name,
-                Picture = item.Picture
+                Picture = item.Picture,
+                FullName = item.Owner.FirstName + " " + item.Owner.LastName
             };
 
             return View(dog);
@@ -76,7 +82,8 @@ namespace DogsProject_Daniel_11_11.Controllers
         {
             if (ModelState.IsValid)
             {
-                var created = _dogService.Create(bindingModel.Name, bindingModel.Age, bindingModel.BreedId, bindingModel.Picture);
+                string currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var created = _dogService.Create(bindingModel.Name, bindingModel.Age, bindingModel.BreedId, bindingModel.Picture, currentUserId);
                 if (created)
                 {
                     return this.RedirectToAction("Success");
@@ -145,6 +152,7 @@ namespace DogsProject_Daniel_11_11.Controllers
                 Age = item.Age,
                 BreedName = item.Breed.Name,
                 Picture = item.Picture,
+                FullName = item.Owner.FirstName + " " + item.Owner.LastName
             };
             return View(dog);
         }
